@@ -56,5 +56,11 @@ func main() {
 		})
 	})
 
+	router.GET("/:roomId", func(c *gin.Context) {
+		c.HTML(http.StatusOK, "editor.html", gin.H{
+			"title": "Posts",
+		})
+	})
+
 	router.Run() // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
 }
