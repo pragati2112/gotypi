@@ -5,8 +5,13 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/gobwas/ws"
 	"github.com/gobwas/ws/wsutil"
+	"net"
 	"net/http"
 )
+
+func nameConn(conn net.Conn) string {
+	return conn.LocalAddr().String() + " > " + conn.RemoteAddr().String()
+}
 
 func handler(c *gin.Context) {
 	conn, _, _, err := ws.UpgradeHTTP(c.Request, c.Writer)
@@ -20,11 +25,14 @@ func handler(c *gin.Context) {
 			msg, op, err := wsutil.ReadClientData(conn)
 			if err != nil {
 				fmt.Println(err)
+				return
 			}
 			err = wsutil.WriteServerMessage(conn, op, msg)
 			if err != nil {
 				fmt.Println(err)
+				return
 			}
+
 		}
 	}()
 }
