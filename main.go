@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"pragati2112.github.io/db"
 	"pragati2112.github.io/handlers"
 	"pragati2112.github.io/wsThings"
 )
@@ -32,6 +33,7 @@ func main() {
 	router.GET("/:roomId", handlers.EditorPage)
 
 	// listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
+	db.DatabaseTest()
 	err := router.Run()
 	if err != nil {
 		panic(err)

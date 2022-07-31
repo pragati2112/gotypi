@@ -15,5 +15,5 @@
 # vendor/
 .idea
 
-# ignore project specific local database
+# ignore project specific local db
 _DB_GOTYPI
