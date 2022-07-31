@@ -7,6 +7,7 @@ import (
 	"github.com/gobwas/ws/wsutil"
 	"net"
 	"net/http"
+	"time"
 )
 
 func nameConn(conn net.Conn) string {
@@ -39,9 +40,11 @@ func handler(c *gin.Context) {
 
 func main() {
 	router := gin.Default()
-	router.GET("/ping", func(c *gin.Context) {
+
+	router.GET("/unique-id", func(c *gin.Context) {
+		fmt.Println(time.Now().UnixNano())
 		c.JSON(http.StatusOK, gin.H{
-			"message": "pong",
+			"roomId": time.Now().UnixNano(),
 		})
 	})
 
@@ -50,6 +53,7 @@ func main() {
 	router.GET("/ws", handler)
 
 	router.LoadHTMLGlob("./templates/*")
+
 	router.GET("/", func(c *gin.Context) {
 		c.HTML(http.StatusOK, "index.html", gin.H{
 			"title": "Posts",
