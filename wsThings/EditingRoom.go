@@ -1,6 +1,8 @@
 package wsThings
 
-import "net"
+import (
+	"net"
+)
 
 // WSConnection is wrapper over net.Conn to keep room id with the connection
 type WSConnection struct {
