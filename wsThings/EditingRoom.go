@@ -8,12 +8,14 @@ import (
 type WSConnection struct {
 	connection net.Conn
 	send       chan []byte
+	clientId string
 }
 
 // Message is a wrapper over simple ws message of byte array type, again to keep room id with it
 type Message struct {
 	data []byte
 	room string
+	senderId string
 }
 
 // EditingRoomManager is the central place to keep track of Rooms and users in rooms
@@ -48,15 +50,19 @@ func (h *EditingRoomManager) Init() {
 		case m := <-h.BroadcastInRoom:
 			connections := h.Rooms[m.room]
 			for c := range connections {
-				select {
-				case c.send <- m.data:
-				default:
-					close(c.send)
-					delete(connections, c)
-					if len(connections) == 0 {
-						delete(h.Rooms, m.room)
-					}
+				if c.clientId != m.senderId{
+					c.send <- m.data
 				}
+
+				//select {
+				//case c.send <- m.data:
+				//default:
+				//	close(c.send)
+				//	delete(connections, c)
+				//	if len(connections) == 0 {
+				//		delete(h.Rooms, m.room)
+				//	}
+				//}
 			}
 		}
 	}

@@ -4,7 +4,14 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/gobwas/ws"
+	"strconv"
+	"time"
 )
+
+func timestamp() int64 {
+	return time.Now().UnixNano() / int64(time.Millisecond)
+}
+
 
 func WsConnectionHandler(c *gin.Context) {
 	roomId := c.Param("roomId")
@@ -17,7 +24,7 @@ func WsConnectionHandler(c *gin.Context) {
 	}
 
 	// create wrapped connection and subscription instances
-	connection := &WSConnection{conn, make(chan []byte, 1024)}
+	connection := &WSConnection{conn, make(chan []byte, 1024), strconv.FormatInt(timestamp(), 10)}
 	subscription := Subscription{connection, roomId}
 
 	// add this subscription into EditingRoomManager
@@ -26,22 +33,4 @@ func WsConnectionHandler(c *gin.Context) {
 	// start reader and writer go routines on the subscription
 	go subscription.WriteToSubscription()
 	go subscription.ReadFromSubscription()
-
-	//go func() {
-	//	defer conn.Close()
-	//
-	//	for {
-	//		msg, op, err := wsutil.ReadClientData(conn)
-	//		if err != nil {
-	//			fmt.Println(err)
-	//			return
-	//		}
-	//		err = wsutil.WriteServerMessage(conn, op, msg)
-	//		if err != nil {
-	//			fmt.Println(err)
-	//			return
-	//		}
-	//
-	//	}
-	//}()
 }

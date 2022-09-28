@@ -54,7 +54,7 @@ func (s Subscription) ReadFromSubscription() {
 		}
 
 		// wrap it into our room aware message wrapper
-		m := Message{msg, s.room}
+		m := Message{msg, s.room, s.wsConn.clientId}
 
 		// Sent this message to everyone present in the room
 		EditingRoomManagerInstance.BroadcastInRoom <- m

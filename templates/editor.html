@@ -41,20 +41,21 @@
         let deltas = [];
         deltas[0] = JSON.parse(event.data);
 
-        if(!myLastChange.start){
-            // myChange = true
-            editor.getSession().getDocument().applyDeltas(deltas);
-            return;
-        }
+        // if(!myLastChange.start){
+        //     // myChange = true
+        //     editor.getSession().getDocument().applyDeltas(deltas);
+        //     return;
+        // }
+        //
+        // else if (myLastChange.start.row===deltas[0].start.row &&
+        //     myLastChange.start.column===deltas[0].start.column &&
+        //     myLastChange.end.row===deltas[0].end.row &&
+        //     myLastChange.end.column===deltas[0].end.column &&
+        //     myLastChange.action===deltas[0].action
+        //     && myLastChange.lines[0]===deltas[0].lines[0]) {
+        //     return
+        // }
 
-        else if (myLastChange.start.row===deltas[0].start.row &&
-            myLastChange.start.column===deltas[0].start.column &&
-            myLastChange.end.row===deltas[0].end.row &&
-            myLastChange.end.column===deltas[0].end.column &&
-            myLastChange.action===deltas[0].action
-            && myLastChange.lines[0]===deltas[0].lines[0]) {
-            return
-        }
         myChange = true
         editor.getSession().getDocument().applyDeltas(deltas);
         myChange = false
@@ -76,7 +77,6 @@
             }, 1000)
         }
     }
-
 
     editor.on('change', (val) => {
         if(myChange){return }
