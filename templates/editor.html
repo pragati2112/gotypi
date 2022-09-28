@@ -19,7 +19,16 @@
             font-size: 1em;
             font-weight: 400;
             width: 11rem;
+            cursor: pointer;
         }
+        #hoverableDropdown:hover{
+            background-color: #292929 !important;
+        }
+        #modeList:hover{
+            background-color: #292929 !important;
+            border-color:  #292929 !important;
+        }
+
     </style>
 </head>
 
@@ -45,7 +54,7 @@
             </div>
 
             <div class="navbar-end">
-                <a class="navbar-item" onclick="showDropdown()" style="background-color: #363636;color: white;">
+                <a class="navbar-item" id="hoverableDropdown" onclick="showDropdown()" style="background-color: #363636;color: white;">
                     <select class="navbar-item" name="Select syntax" id="modeList">
                         <option value="Select syntax">Select syntax</option>
                     </select>
