@@ -64,7 +64,7 @@
 
                 <div class="navbar-item">
                     <div class="buttons">
-                        <a class="button is-light">
+                        <a class="button is-light" onclick="downloadText()">
                             Download code
                         </a>
                     </div>
@@ -73,7 +73,6 @@
         </div>
     </nav>
 </div>
-
 
 <div>
     <div class="modal" id="myModal">
@@ -91,7 +90,7 @@
 
     <div id="editor">
         def test_function():
-        print('this function just tests')
+            print('Hello world')
     </div>
 
 </div>
@@ -152,6 +151,7 @@
         myLastChange = val
     })
 
+
     // utilities
     function showModal(){
         document.getElementById('myModal').style.display = 'block';
@@ -175,6 +175,16 @@
             select.appendChild(option);
         }
         selectPressed=true
+    }
+
+    function downloadText(){
+        let downloadableLink = document.createElement('a');
+        downloadableLink.setAttribute('href', 'data:text/plain;charset=utf-8,' +
+            encodeURIComponent(document.getElementById("editor").value));
+        downloadableLink.download = (new Date().getSeconds()).toString() + ".txt";
+        document.body.appendChild(downloadableLink);
+        downloadableLink.click();
+        document.body.removeChild(downloadableLink);
     }
 
 
