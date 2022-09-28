@@ -179,8 +179,7 @@
 
     function downloadText(){
         let downloadableLink = document.createElement('a');
-        downloadableLink.setAttribute('href', 'data:text/plain;charset=utf-8,' +
-            encodeURIComponent(document.getElementById("editor").value));
+        downloadableLink.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(editor.getValue()));
         downloadableLink.download = (new Date().getSeconds()).toString() + ".txt";
         document.body.appendChild(downloadableLink);
         downloadableLink.click();
