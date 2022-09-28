@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="roomid" content="{{.roomId}}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
     <title>Title</title>
 
     <style>
@@ -11,51 +12,109 @@
             width: 100%;
             height: 100%;
         }
+        #modeList{
+            background-color: #363636;
+            color: white;
+            border-color: #363636;
+            font-size: 1em;
+            font-weight: 400;
+            width: 11rem;
+        }
     </style>
 </head>
 
 <body>
 
+<div>
+    <nav class="navbar is-dark" role="navigation" aria-label="main navigation">
+        <div class="navbar-brand">
+            <a class="navbar-item">
+                <h1 class="title is-3 " style="color: white">GoTypi</h1>
+            </a>
 
-<div id="editor">
-    def test_function():
+            <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+            </a>
+        </div>
+
+        <div id="navbarBasicExample" class="navbar-menu">
+            <div class="navbar-start">
+
+            </div>
+
+            <div class="navbar-end">
+                <a class="navbar-item" onclick="showDropdown()" style="background-color: #363636;color: white;">
+                    <select class="navbar-item" name="Select syntax" id="modeList">
+                        <option value="Select syntax">Select syntax</option>
+                    </select>
+                </a>
+
+                <a class="navbar-item" onclick="showModal()">Share editor</a>
+
+                <div class="navbar-item">
+                    <div class="buttons">
+                        <a class="button is-light">
+                            Download code
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+</div>
+
+
+<div>
+    <div class="modal" id="myModal">
+        <div class="modal-background"></div>
+        <div class="modal-content">
+            <section class="section">
+                <div class="box">
+                    <input class="input is-medium" type="text" id="shareCode">
+                    <p class="has-text-info">Copy to share</p>
+                </div>
+            </section>
+        </div>
+        <button class="modal-close is-large" aria-label="close" onclick="closeModal()"></button>
+    </div>
+
+    <div id="editor">
+        def test_function():
         print('this function just tests')
+    </div>
 
 </div>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.8.1/ace.js" integrity="sha512-qqjLKA1tYKWxtpKReCrmE8DNYVa+/gNzzeJ6SZaTi+3J+KdTXUlS3AZtcPydvb0rXWtdwE4/KCS4RjfMGeil6g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.8.1/theme-twilight.min.js" integrity="sha512-dFk7kcyT/ImbfIW3JcvxjjJ1ZqIxNfUbqn4QoYkkeZsp0h298RuPwy81fF1ZguJp4HbCz4ToDUhl3ajkCVAIBw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <script type="text/javascript"></script>
+
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.8.1/ace.js" integrity="sha512-qqjLKA1tYKWxtpKReCrmE8DNYVa+/gNzzeJ6SZaTi+3J+KdTXUlS3AZtcPydvb0rXWtdwE4/KCS4RjfMGeil6g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.8.1/theme-twilight.min.js" integrity="sha512-dFk7kcyT/ImbfIW3JcvxjjJ1ZqIxNfUbqn4QoYkkeZsp0h298RuPwy81fF1ZguJp4HbCz4ToDUhl3ajkCVAIBw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.11.2/ext-modelist.min.js" integrity="sha512-RX03+gQxfTlsbKpLDZ7MH1c3xkEEsywyr3DaHUiWre/Q5NmcpZsZ3yF5Il+rEJnru9rwA+3S+77ZDKELDsOBsQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script type="text/javascript"></script>
 <script>
 
     const WS_URL = 'ws://127.0.0.1:8080/ws/'
     let myChange = false
     let myLastChange = ""
-    const socket = new WebSocket(WS_URL + window.location.pathname.replace('/', ''))
+    let selectPressed = false
+    document.getElementById('shareCode').value = document.location;
 
+    // Set Editor
+    const modelist = ace.require("ace/ext/modelist")
     const editor = ace.edit("editor");
     editor.setTheme("ace/theme/monokai");
-    editor.session.setMode("ace/mode/python");
+    document.getElementById('modeList').addEventListener("change", (event)=>{
+        let mode = document.getElementById('modeList').value
+        editor.session.setMode(mode!=="Select syntax"? mode: "ace/mode/python");
+    })
 
-
+    // Set websocket connection
+    const socket = new WebSocket(WS_URL + window.location.pathname.replace('/', ''))
     socket.onmessage = (event) => {
         let deltas = [];
         deltas[0] = JSON.parse(event.data);
-
-        // if(!myLastChange.start){
-        //     // myChange = true
-        //     editor.getSession().getDocument().applyDeltas(deltas);
-        //     return;
-        // }
-        //
-        // else if (myLastChange.start.row===deltas[0].start.row &&
-        //     myLastChange.start.column===deltas[0].start.column &&
-        //     myLastChange.end.row===deltas[0].end.row &&
-        //     myLastChange.end.column===deltas[0].end.column &&
-        //     myLastChange.action===deltas[0].action
-        //     && myLastChange.lines[0]===deltas[0].lines[0]) {
-        //     return
-        // }
-
         myChange = true
         editor.getSession().getDocument().applyDeltas(deltas);
         myChange = false
@@ -83,6 +142,31 @@
         socket.send(JSON.stringify(val))
         myLastChange = val
     })
+
+    // utilities
+    function showModal(){
+        document.getElementById('myModal').style.display = 'block';
+    }
+
+    function closeModal(){
+        document.getElementById('myModal').style.display = 'none';
+    }
+
+    function showDropdown() {
+        if (selectPressed){
+            return
+        }
+        let select = document.getElementById("modeList")
+        select.name = "Select syntax";
+        for (const val of modelist.modes)
+        {
+            let option = document.createElement("option");
+            option.value = val.mode;
+            option.text = val.caption;
+            select.appendChild(option);
+        }
+        selectPressed=true
+    }
 
 
     // const setupWebSocket = (roomId = undefined) => {
