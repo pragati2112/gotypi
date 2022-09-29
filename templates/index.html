@@ -61,7 +61,10 @@
    // });
    // console.log(response.json())
    // return response.json();
-
+   if (document.getElementById('roomId').value ===''){
+    alert('Enter room name')
+    return
+   }
    window.location.href = document.getElementById('roomId').value;
   }
 
