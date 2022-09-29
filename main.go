@@ -9,13 +9,13 @@ import (
 )
 
 func main() {
-
 	go wsThings.EditingRoomManagerInstance.Init()
 
 	// set up gin router with static file serving and HTML template rendering
 	router := gin.Default()
 
 	router.LoadHTMLGlob("./templates/*")
+
 	router.Static("/static", "./static")
 
 	// cutesy pingy pongy route
@@ -30,13 +30,14 @@ func main() {
 	})
 
 	router.GET("/", handlers.LandingPage)
+
 	router.GET("/:roomId", handlers.EditorPage)
 
 	router.POST("/roomId", func(c *gin.Context){
 		roomId:= handlers.CreateRoom(c)
 		buffer := []byte(`{"roomId":"`+roomId+`"}`)
 		c.Data(http.StatusOK, "application/json", buffer)
-		}, )
+		})
 
 
 	// listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")

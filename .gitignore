@@ -17,3 +17,4 @@
 
 # ignore project specific local db
 _DB_GOTYPI
+.env
