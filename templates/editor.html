@@ -109,7 +109,8 @@
 <script type="text/javascript"></script>
 <script>
 
-    const WS_URL = 'ws://127.0.0.1:8080/ws/'
+    const WS_URL = '{{.wshost}}'
+    // 'ws://127.0.0.1:8080/ws/'
     let myChange = false
     let selectPressed = false
     document.getElementById('shareCode').value = document.location;

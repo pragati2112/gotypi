@@ -2,6 +2,8 @@ package main
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/joho/godotenv"
+	"log"
 	"net/http"
 	"pragati2112.github.io/db"
 	"pragati2112.github.io/handlers"
@@ -9,6 +11,10 @@ import (
 )
 
 func main() {
+	dotenverr := godotenv.Load()
+	if dotenverr != nil {
+		log.Fatal("Error loading .env file")
+	}
 	go wsThings.EditingRoomManagerInstance.Init()
 
 	// set up gin router with static file serving and HTML template rendering
