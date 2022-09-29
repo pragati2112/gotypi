@@ -1,4 +1,4 @@
-FROM golang:1.18-alpine
+FROM golang:1.18-alpine as build
 WORKDIR /app
 
 # we are copying the whole dir
@@ -14,9 +14,24 @@ RUN mv .env.docker .env
 RUN ls -lah
 
 #that is for build
-#RUN go build -o /docker-gs-ping
+
+RUN go build -o /gotypi
+
+
+
+
+## Deploy
+FROM alpine:latest as prod
+
+WORKDIR /app
+COPY --from=build /gotypi /app/gotypi-app
+COPY --from=build /app/templates/ /app/templates
+COPY --from=build /app/static/ /app/static
+RUN ls -lah /app
 
 EXPOSE 8080
-CMD ["./entrypoint.sh"]
+
+ENTRYPOINT ["/app/gotypi-app"]
+#ENTRYPOINT ["tail", "-f", "/dev/null"]
 
 
