@@ -11,15 +11,17 @@
             position: absolute;
             width: 100%;
             height: 100%;
+            font-size: 15px;
         }
         #modeList{
             background-color: #363636;
-            color: white;
             border-color: #363636;
             font-size: 1em;
             font-weight: 400;
             width: 11rem;
             cursor: pointer;
+            border-top-width: 0px;
+            border-left-width: 0px;
         }
         #hoverableDropdown:hover{
             background-color: #292929 !important;
@@ -38,7 +40,7 @@
     <nav class="navbar is-dark" role="navigation" aria-label="main navigation">
         <div class="navbar-brand">
             <a class="navbar-item">
-                <h1 class="title is-3 " style="color: white">GoTypi</h1>
+                <h1 class="title is-3 " style="color: #1CB5E0">GoTypi</h1>
             </a>
 
             <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
@@ -54,17 +56,18 @@
             </div>
 
             <div class="navbar-end">
-                <a class="navbar-item" id="hoverableDropdown" onclick="showDropdown()" style="background-color: #363636;color: white;">
-                    <select class="navbar-item" name="Select syntax" id="modeList">
+                <a class="navbar-item" id="hoverableDropdown" onclick="showDropdown()"
+                   style="background-color: #363636;color: white;">
+                    <select class="navbar-item has-text-info" name="Select syntax" id="modeList">
                         <option value="Select syntax">Select syntax</option>
                     </select>
                 </a>
 
-                <a class="navbar-item" onclick="showModal()">Share editor</a>
+                <a class="navbar-item has-text-info" onclick="showModal()">Share editor</a>
 
                 <div class="navbar-item">
                     <div class="buttons">
-                        <a class="button is-light" onclick="downloadText()">
+                        <a class="button is-info" onclick="downloadText()">
                             Download code
                         </a>
                     </div>
@@ -80,8 +83,11 @@
         <div class="modal-content">
             <section class="section">
                 <div class="box">
-                    <input class="input is-medium" type="text" id="shareCode">
-                    <p class="has-text-info">Copy to share</p>
+                    <input class="input is-normal" type="text" id="shareCode">
+                    <span class="tag is-info" style="cursor: pointer"
+                          onclick="copyToClipboard()">
+                        Click me to copy!
+                    </span>
                 </div>
             </section>
         </div>
@@ -105,7 +111,6 @@
 
     const WS_URL = 'ws://127.0.0.1:8080/ws/'
     let myChange = false
-    let myLastChange = ""
     let selectPressed = false
     document.getElementById('shareCode').value = document.location;
 
@@ -113,9 +118,24 @@
     const modelist = ace.require("ace/ext/modelist")
     const editor = ace.edit("editor");
     editor.setTheme("ace/theme/monokai");
+
+    if(localStorage.getItem('mode')){
+        let getMode = JSON.parse(localStorage.getItem('mode'))
+        editor.session.setMode(getMode.value);
+        document.getElementById('modeList').value = getMode.value
+        document.getElementById('modeList').innerHTML = "<option value='" + getMode.value + "'>" + getMode.name + "</option>";
+    }
+
+
     document.getElementById('modeList').addEventListener("change", (event)=>{
-        let mode = document.getElementById('modeList').value
-        editor.session.setMode(mode!=="Select syntax"? mode: "ace/mode/python");
+        let mode = {name: '' , value: ''}
+        mode.name = document.getElementById('modeList').selectedOptions[0].innerText
+        mode.value = document.getElementById('modeList').value
+        localStorage.setItem("mode", JSON.stringify(mode))
+        let getMode = JSON.parse(localStorage.getItem('mode'))
+        editor.session.setMode(getMode.value);
+
+        socket.send(JSON.stringify({changeMode:mode}))
     })
 
     // Set websocket connection
@@ -123,10 +143,19 @@
     socket.onmessage = (event) => {
         let deltas = [];
         deltas[0] = JSON.parse(event.data);
-        myChange = true
-        editor.getSession().getDocument().applyDeltas(deltas);
-        myChange = false
 
+        if (deltas[0].changeMode){
+            let getMode = deltas[0].changeMode
+            document.getElementById('modeList').value = getMode.value
+            document.getElementById('modeList').innerHTML = "<option value='" + getMode.value + "'>" + getMode.name + "</option>";
+            editor.session.setMode(getMode.value);
+            localStorage.setItem("mode", JSON.stringify(getMode))
+        }
+        else{
+            myChange = true
+            editor.getSession().getDocument().applyDeltas(deltas);
+            myChange = false
+        }
     }
 
     socket.onerror = (error) => {
@@ -148,7 +177,6 @@
     editor.on('change', (val) => {
         if(myChange){return }
         socket.send(JSON.stringify(val))
-        myLastChange = val
     })
 
 
@@ -186,12 +214,18 @@
         document.body.removeChild(downloadableLink);
     }
 
+    function copyToClipboard() {
+        let copyText = document.getElementById('shareCode');
+        copyText.select();
+        document.execCommand("copy");
+        alert("Copied!");
+    }
+
 
     // const setupWebSocket = (roomId = undefined) => {
     //     if(!roomId) {
     //         roomId = document.querySelector("meta[name='roomid']").content
     //     }
-    //
     // }
 </script>
 
