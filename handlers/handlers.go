@@ -3,7 +3,6 @@ package handlers
 import (
 	"encoding/base64"
 	"encoding/binary"
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"math/rand"
 	"net/http"
@@ -14,12 +13,11 @@ import (
 func LandingPage(c *gin.Context) {
 	c.HTML(http.StatusOK, "index.html", gin.H{
 		"title": "Posts",
+		"roomId": CreateRoom(c),
 	})
 }
 
 func EditorPage(c *gin.Context) {
-	fmt.Println("/*/*/*/*/*/*/")
-	fmt.Println(os.Getenv("WS_URL"))
 	c.HTML(http.StatusOK, "editor.html", gin.H{
 		"roomId": CreateRoom(c),
 		"wshost": os.Getenv("WS_URL"),

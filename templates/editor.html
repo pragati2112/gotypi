@@ -39,7 +39,7 @@
 <div>
     <nav class="navbar is-dark" role="navigation" aria-label="main navigation">
         <div class="navbar-brand">
-            <a class="navbar-item">
+            <a class="navbar-item" href="https://gotypi.in">
                 <h1 class="title is-3 " style="color: #1CB5E0">GoTypi</h1>
             </a>
 
@@ -220,14 +220,8 @@
         copyText.select();
         document.execCommand("copy");
         alert("Copied!");
+        document.getElementById('myModal').style.display = 'none';
     }
-
-
-    // const setupWebSocket = (roomId = undefined) => {
-    //     if(!roomId) {
-    //         roomId = document.querySelector("meta[name='roomid']").content
-    //     }
-    // }
 </script>
 
 </body>

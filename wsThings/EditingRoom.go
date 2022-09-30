@@ -1,6 +1,7 @@
 package wsThings
 
 import (
+	"fmt"
 	"net"
 )
 
@@ -50,19 +51,19 @@ func (h *EditingRoomManager) Init() {
 		case m := <-h.BroadcastInRoom:
 			connections := h.Rooms[m.room]
 			for c := range connections {
-				if c.clientId != m.senderId{
-					c.send <- m.data
+				if c.clientId != m.senderId {
+					select {
+					case c.send <- m.data:
+					default:
+						fmt.Println("Closing connection, bye")
+						close(c.send)
+						delete(connections, c)
+						if len(connections) == 0 {
+							delete(h.Rooms, m.room)
+						}
+					}
 				}
 
-				//select {
-				//case c.send <- m.data:
-				//default:
-				//	close(c.send)
-				//	delete(connections, c)
-				//	if len(connections) == 0 {
-				//		delete(h.Rooms, m.room)
-				//	}
-				//}
 			}
 		}
 	}
