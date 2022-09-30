@@ -19,7 +19,6 @@ func LandingPage(c *gin.Context) {
 
 func EditorPage(c *gin.Context) {
 	c.HTML(http.StatusOK, "editor.html", gin.H{
-		"roomId": CreateRoom(c),
 		"wshost": os.Getenv("WS_URL"),
 	})
 }
