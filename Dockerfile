@@ -23,7 +23,7 @@ RUN go build -o /gotypi
 ## Deploy
 FROM alpine:latest as prod
 WORKDIR /app
-RUN mv .env.docker .env
+COPY --from=build /app/.env /app/.env
 COPY --from=build /gotypi /app/gotypi-app
 COPY --from=build /app/templates/ /app/templates
 COPY --from=build /app/static/ /app/static
