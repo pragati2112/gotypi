@@ -29,7 +29,7 @@ COPY --from=build /app/templates/ /app/templates
 COPY --from=build /app/static/ /app/static
 RUN ls -lah /app
 
-EXPOSE 8080
+EXPOSE 8082
 
 ENTRYPOINT ["/app/gotypi-app"]
 #ENTRYPOINT ["tail", "-f", "/dev/null"]
